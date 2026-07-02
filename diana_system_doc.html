@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Diana — Documentação do Sistema</title>
+<style>
+  :root {
+    --dark: #0A2E2A;
+    --teal: #0F6E56;
+    --mint: #1D9E75;
+    --light-mint: #E1F5EE;
+    --white: #FFFFFF;
+    --gray-50: #F7F9F8;
+    --gray-100: #EEF2F0;
+    --gray-300: #C4D4CE;
+    --gray-500: #6B8A80;
+    --gray-700: #2D4A42;
+    --text: #1A2E28;
+    --accent-analyst: #185FA5;
+    --accent-arch: #7B3FA0;
+    --font-display: 'Georgia', 'Times New Roman', serif;
+    --font-body: 'Segoe UI', system-ui, sans-serif;
+    --font-mono: 'Courier New', monospace;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: var(--font-body);
+    background: var(--gray-50);
+    color: var(--text);
+    line-height: 1.65;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: var(--dark);
+    display: flex; align-items: center; gap: 32px;
+    padding: 0 40px; height: 56px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+  .nav-brand { display: flex; align-items: center; gap: 12px; }
+  .nav-avatar {
+    width: 32px; height: 32px; border-radius: 50%;
+    background: var(--mint);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 700; color: white;
+  }
+  .nav-brand span { font-size: 15px; font-weight: 600; color: white; letter-spacing: 0.02em; }
+  nav a {
+    font-size: 13px; color: rgba(255,255,255,0.6);
+    text-decoration: none; padding: 4px 0;
+    border-bottom: 2px solid transparent;
+    transition: color 0.15s, border-color 0.15s;
+  }
+  nav a:hover { color: var(--mint); border-color: var(--mint); }
+  .nav-badge {
+    margin-left: auto;
+    font-size: 11px; font-weight: 500;
+    background: rgba(29,158,117,0.2); color: var(--mint);
+    padding: 4px 10px; border-radius: 20px;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    background: var(--dark);
+    padding: 80px 40px 64px;
+    position: relative; overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute; top: 0; left: 0;
+    width: 4px; height: 100%;
+    background: var(--mint);
+  }
+  .hero-inner { max-width: 860px; margin: 0 auto; }
+  .hero-eyebrow {
+    font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--mint); margin-bottom: 16px;
+  }
+  .hero h1 {
+    font-family: var(--font-display);
+    font-size: clamp(36px, 5vw, 56px);
+    font-weight: 400; color: white;
+    line-height: 1.15; margin-bottom: 20px;
+  }
+  .hero h1 em { color: var(--mint); font-style: normal; }
+  .hero-sub {
+    font-size: 17px; color: rgba(255,255,255,0.65);
+    max-width: 560px; margin-bottom: 40px;
+  }
+  .hero-stats {
+    display: flex; gap: 40px; flex-wrap: wrap;
+  }
+  .stat { border-left: 2px solid var(--mint); padding-left: 16px; }
+  .stat-num { font-size: 28px; font-weight: 300; color: white; font-family: var(--font-display); }
+  .stat-label { font-size: 12px; color: rgba(255,255,255,0.5); margin-top: 2px; }
+
+  /* ── LAYOUT ── */
+  .container { max-width: 1100px; margin: 0 auto; padding: 0 40px; }
+  section { padding: 72px 0; }
+  section + section { border-top: 1px solid var(--gray-100); }
+
+  .section-header { margin-bottom: 48px; }
+  .section-eyebrow {
+    font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--mint); margin-bottom: 8px;
+  }
+  .section-header h2 {
+    font-family: var(--font-display);
+    font-size: 32px; font-weight: 400; color: var(--dark);
+  }
+  .section-header p { font-size: 15px; color: var(--gray-500); margin-top: 8px; max-width: 560px; }
+
+  /* ── PERSONAS (Analyst + Architect) ── */
+  .persona-tabs {
+    display: flex; gap: 2px; margin-bottom: 32px;
+    background: var(--gray-100); padding: 4px; border-radius: 10px;
+    width: fit-content;
+  }
+  .tab-btn {
+    padding: 10px 24px; border: none; border-radius: 8px;
+    font-size: 13px; font-weight: 500; cursor: pointer;
+    background: transparent; color: var(--gray-500);
+    transition: all 0.2s;
+  }
+  .tab-btn.active { background: white; color: var(--text); box-shadow: 0 1px 4px rgba(0,0,0,0.1); }
+
+  .persona-panel { display: none; }
+  .persona-panel.active { display: block; }
+
+  .persona-card {
+    border-radius: 12px; overflow: hidden;
+    border: 1px solid var(--gray-100);
+  }
+  .persona-header {
+    padding: 28px 32px;
+    display: flex; align-items: center; gap: 16px;
+  }
+  .persona-header.analyst { background: linear-gradient(135deg, #0A1628 0%, #0D2445 100%); }
+  .persona-header.architect { background: linear-gradient(135deg, #1A0A28 0%, #2D1045 100%); }
+  .persona-icon {
+    width: 48px; height: 48px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px; flex-shrink: 0;
+  }
+  .analyst .persona-icon { background: rgba(24,95,165,0.3); }
+  .architect .persona-icon { background: rgba(123,63,160,0.3); }
+  .persona-title { color: white; }
+  .persona-title h3 { font-size: 18px; font-weight: 500; }
+  .persona-title p { font-size: 13px; opacity: 0.6; margin-top: 2px; }
+  .persona-body { background: white; padding: 32px; }
+
+  .finding {
+    display: flex; gap: 16px; margin-bottom: 24px;
+    padding-bottom: 24px; border-bottom: 1px solid var(--gray-100);
+  }
+  .finding:last-child { margin-bottom: 0; padding-bottom: 0; border-bottom: none; }
+  .finding-num {
+    width: 28px; height: 28px; border-radius: 6px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 700; margin-top: 1px;
+  }
+  .analyst .finding-num { background: rgba(24,95,165,0.1); color: var(--accent-analyst); }
+  .architect .finding-num { background: rgba(123,63,160,0.1); color: var(--accent-arch); }
+  .finding h4 { font-size: 14px; font-weight: 600; color: var(--dark); margin-bottom: 4px; }
+  .finding p { font-size: 13px; color: var(--gray-500); line-height: 1.6; }
+
+  .code-block {
+    background: #0D1117; border-radius: 8px;
+    padding: 20px 24px; margin: 16px 0;
+    font-family: var(--font-mono); font-size: 12px; color: #8B949E;
+    overflow-x: auto;
+  }
+  .code-block .kw { color: #FF7B72; }
+  .code-block .str { color: #A5D6FF; }
+  .code-block .cm { color: #4D5566; }
+  .code-block .fn { color: #D2A8FF; }
+  .code-block .num { color: #F0883E; }
+
+  /* ── FLUXO ── */
+  .flow-grid {
+    display: grid;
+    grid-template-columns: 1fr 32px 1fr 32px 1fr 32px 1fr;
+    align-items: center; gap: 0;
+  }
+  .flow-step {
+    background: white; border-radius: 10px;
+    border: 1px solid var(--gray-100);
+    padding: 20px; text-align: center;
+  }
+  .flow-step-num {
+    width: 32px; height: 32px; border-radius: 50%;
+    background: var(--dark); color: var(--mint);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 700; margin: 0 auto 12px;
+  }
+  .flow-step h4 { font-size: 13px; font-weight: 600; color: var(--dark); margin-bottom: 4px; }
+  .flow-step p { font-size: 11px; color: var(--gray-500); line-height: 1.5; }
+  .flow-arrow { text-align: center; color: var(--mint); font-size: 18px; }
+
+  /* ── CAPACIDADES ── */
+  .cap-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; }
+  .cap-card {
+    background: white; border-radius: 10px;
+    border: 1px solid var(--gray-100);
+    padding: 24px;
+    border-left: 3px solid var(--mint);
+  }
+  .cap-icon { font-size: 22px; margin-bottom: 12px; }
+  .cap-card h3 { font-size: 14px; font-weight: 600; color: var(--dark); margin-bottom: 6px; }
+  .cap-card p { font-size: 13px; color: var(--gray-500); line-height: 1.6; }
+  .cap-tag {
+    display: inline-block; margin-top: 10px;
+    font-size: 10px; font-weight: 500; letter-spacing: 0.06em;
+    padding: 3px 8px; border-radius: 4px;
+    background: var(--light-mint); color: var(--teal);
+  }
+
+  /* ── PERGUNTAS ── */
+  .q-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .q-item {
+    background: white; border-radius: 10px;
+    border: 1px solid var(--gray-100); padding: 18px 20px;
+    display: flex; gap: 12px; align-items: flex-start;
+  }
+  .q-badge {
+    flex-shrink: 0; padding: 3px 8px; border-radius: 4px;
+    font-size: 10px; font-weight: 600; letter-spacing: 0.05em;
+    margin-top: 1px;
+  }
+  .badge-prosp { background: #E1F5EE; color: #0F6E56; }
+  .badge-intel { background: #E6EEF9; color: #185FA5; }
+  .badge-pipe  { background: #FFF0E1; color: #9C5A00; }
+  .badge-abord { background: #F3EAF9; color: #7B3FA0; }
+  .badge-audit { background: #FFE8E8; color: #A01F1F; }
+  .q-item p { font-size: 13px; color: var(--text); font-style: italic; line-height: 1.5; }
+
+  /* ── ARCH DIAGRAM ── */
+  .arch-diagram {
+    background: #0D1117; border-radius: 12px;
+    padding: 32px; margin: 24px 0;
+    font-family: var(--font-mono); font-size: 12px; color: #8B949E;
+    line-height: 1.8; overflow-x: auto;
+  }
+  .arch-diagram .green { color: #3FB950; }
+  .arch-diagram .blue { color: #58A6FF; }
+  .arch-diagram .purple { color: #D2A8FF; }
+  .arch-diagram .orange { color: #F0883E; }
+  .arch-diagram .red { color: #FF7B72; }
+
+  /* ── ACESSO ── */
+  .users-grid { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 32px; }
+  .user-chip {
+    display: flex; align-items: center; gap: 10px;
+    background: white; border: 1px solid var(--gray-100);
+    border-radius: 24px; padding: 8px 16px 8px 8px;
+  }
+  .user-av {
+    width: 32px; height: 32px; border-radius: 50%;
+    background: var(--teal); color: white;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 700;
+  }
+  .user-name { font-size: 13px; font-weight: 500; color: var(--dark); }
+
+  .cta-box {
+    background: var(--teal); border-radius: 12px;
+    padding: 28px 32px;
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 16px;
+  }
+  .cta-box h3 { font-size: 17px; font-weight: 500; color: white; }
+  .cta-box p { font-size: 13px; color: rgba(255,255,255,0.75); margin-top: 4px; }
+  .cta-steps {
+    display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+  }
+  .cta-step {
+    background: rgba(255,255,255,0.15); border-radius: 6px;
+    padding: 6px 12px; font-size: 12px; color: white;
+  }
+  .cta-arrow { color: rgba(255,255,255,0.5); font-size: 14px; }
+
+  /* ── MÉTRICAS ── */
+  .metrics-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 32px; }
+  .metric-card {
+    background: var(--dark); border-radius: 10px;
+    padding: 24px; text-align: center;
+  }
+  .metric-val { font-size: 36px; font-weight: 300; color: var(--mint); font-family: var(--font-display); }
+  .metric-label { font-size: 12px; color: rgba(255,255,255,0.5); margin-top: 6px; }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--dark); padding: 32px 40px;
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 16px;
+  }
+  footer p { font-size: 12px; color: rgba(255,255,255,0.4); }
+  .footer-brand { display: flex; align-items: center; gap: 10px; }
+  .footer-brand span { font-size: 13px; font-weight: 600; color: rgba(255,255,255,0.7); }
+
+  @media (max-width: 768px) {
+    nav { padding: 0 20px; gap: 16px; }
+    nav a { display: none; }
+    .hero { padding: 48px 20px; }
+    .container { padding: 0 20px; }
+    section { padding: 48px 0; }
+    .flow-grid { grid-template-columns: 1fr; }
+    .flow-arrow { transform: rotate(90deg); }
+    .q-grid { grid-template-columns: 1fr; }
+    .metrics-row { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-brand">
+    <div class="nav-avatar">Di</div>
+    <span>Diana — Documentação</span>
+  </div>
+  <a href="#overview">Visão Geral</a>
+  <a href="#analyst">Analista</a>
+  <a href="#architect">Arquiteto</a>
+  <a href="#capacidades">Capacidades</a>
+  <a href="#acesso">Acesso</a>
+  <span class="nav-badge">● MiniMax-M3 — Ativo</span>
+</nav>
+
+<!-- HERO -->
+<div class="hero" id="overview">
+  <div class="hero-inner">
+    <div class="hero-eyebrow">HupData · Agente de Prospecção</div>
+    <h1>Diana<br><em>Converte MQL em SQL.</em><br>Recomenda ao time.</h1>
+    <p class="hero-sub">Agente de IA disponível 24h no Microsoft Teams. Analisa 570+ leads inbound e 30+ outbound, cruza com o Pipedrive e entrega recomendações contextualizadas com cases reais da HupData.</p>
+    <div class="hero-stats">
+      <div class="stat">
+        <div class="stat-num">570+</div>
+        <div class="stat-label">Leads inbound ativos</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">30</div>
+        <div class="stat-label">Outbound top score</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">6</div>
+        <div class="stat-label">SDRs com acesso</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">17h30</div>
+        <div class="stat-label">Sync diário seg–sex</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FLUXO -->
+<section>
+  <div class="container">
+    <div class="section-header">
+      <div class="section-eyebrow">Fluxo do sistema</div>
+      <h2>Do lead ao deal em 4 etapas</h2>
+      <p>Diana opera no centro do funil — entre o MQL qualificado e o deal aberto no Pipedrive.</p>
+    </div>
+    <div class="flow-grid">
+      <div class="flow-step">
+        <div class="flow-step-num">01</div>
+        <h4>Busca no Inbound + Outbound</h4>
+        <p>570+ inbound + 30 outbound do SQLite local. Pipedrive verificado silenciosamente após triagem — não é fonte de leads.</p>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="flow-step-num">02</div>
+        <h4>Busca Inbound + Outbound</h4>
+        <p>Consulta SQLite local (570 inbound + 30 outbound) — Pipedrive é verificado silenciosamente após triagem</p>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="flow-step-num">03</div>
+        <h4>Busca case</h4>
+        <p>Encontra case da HupData do mesmo setor com ROI concreto</p>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="flow-step-num">04</div>
+        <h4>Entrega card</h4>
+        <p>Nome, cargo, email, score detalhado, ângulo e status Pipedrive</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ANALISTA -->
+<section id="analyst">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-eyebrow">Perspectiva funcional</div>
+      <h2>Relatório do Analista de Sistemas</h2>
+      <p>Varredura completa do comportamento e lógica de negócio da Diana.</p>
+    </div>
+
+    <div class="persona-card analyst">
+      <div class="persona-header analyst">
+        <div class="persona-icon">🔍</div>
+        <div class="persona-title">
+          <h3>Analista de Sistemas</h3>
+          <p>Varredura funcional — como o sistema se comporta</p>
+        </div>
+      </div>
+      <div class="persona-body">
+
+        <div class="finding">
+          <div class="finding-num analyst">1</div>
+          <div>
+            <h4>Pipeline de dados — sync diário às 17h30</h4>
+            <p>O sistema executa três fetchers em sequência: <code>inbound_fetcher.py</code> (lê <code>inbound_nutria</code> via MySQL, user thomas), <code>outbound_fetcher.py</code> (lê <code>nutricao_outbound</code>, top 30 por Score DESC) e <code>audit_fetcher.py</code> (lê <code>leads_controladoria_compliance_supply</code> para modo Audit). Todos gravam no SQLite local <code>diana_memory.db</code>. Cron: <code>30 17 * * 1-5</code>.</p>
+            <div class="code-block">
+<span class="cm"># Tabelas MySQL → SQLite</span>
+<span class="kw">inbound_nutria</span>       → inbound_leads   <span class="cm">(570 leads, score_geral, opened, clicked)</span>
+<span class="kw">nutricao_outbound</span>    → outbound_leads  <span class="cm">(top 30, Score DESC, respondeu, cargo_decisor)</span>
+<span class="kw">leads_ctrl_compliance</span>→ audit_leads     <span class="cm">(campanha Audit — auditoria/tax/compliance/planej.financeiro/controladoria/supply, ~68 variantes EN↔PT)</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="finding">
+          <div class="finding-num analyst">2</div>
+          <div>
+            <h4>Lógica de recomendação — dois modos</h4>
+            <p><strong>Modo Normal:</strong> retorna 5 inbound (score_geral DESC, source='both' primeiro) + 2 outbound (Score DESC). <strong>Modo Audit:</strong> ativado por palavras-chave (audit, auditoria, tax, compliance, controladoria, risk, supply, planejamento financeiro) — retorna 3 inbound filtrados por cargo + 1 outbound da tabela <code>audit_leads</code>. Match semântico PT↔EN ativado (ex: "Tax Manager" = "Gerente de Tax"). Filtros obrigatórios em ambos: reserva ativa de outro SDR (&lt;7 dias), deal aberto no Pipedrive e Pre-Sales em estágio early.</p>
+          </div>
+        </div>
+
+        <div class="finding">
+          <div class="finding-num analyst">3</div>
+          <div>
+            <h4>Score inbound — composição dos 5 critérios</h4>
+            <p>Score máximo: 97 pts. Campos: <code>opened</code> (0/15) — abriu email; <code>clicked</code> (0/25) — clicou em link, MAIOR PESO; <code>empresa_potencial_usuario</code> (8/12/15) — outros da empresa engajados; <code>contagem_listas</code> (8/12/15) — múltiplas listas; <code>pipedrive</code> — campo NÃO usado para filtro (incorreto no upstream), verificação feita em tempo real via <code>pipedrive_monitor.py</code>.</p>
+          </div>
+        </div>
+
+        <div class="finding">
+          <div class="finding-num analyst">4</div>
+          <div>
+            <h4>Reserva de leads por SDR — 7 dias</h4>
+            <p>Ao recomendar, Diana grava em <code>recomendacoes</code> (email, sdr, data_recomendacao). Lead recomendado fica reservado para aquele SDR por 7 dias. Se outro SDR pedir o mesmo lead: <em>"⚠️ Reservado para [SDR] até [data]"</em>. Expiração automática por comparação de datas na query SQL.</p>
+          </div>
+        </div>
+
+        <div class="finding">
+          <div class="finding-num analyst">5</div>
+          <div>
+            <h4>Regra Pipedrive — Won/Lost/Aberto/Pre-Sales</h4>
+            <p>Diana verifica status via <code>pipedrive_monitor.py</code> antes de recomendar. ⚪ Sem histórico = pode prospectar. 🔴 Lost = pode reabordar. 🟡 Deal aberto nos funis Simon.AI/Training/Hub/Consulting/Pre-Sales = NÃO recomendar este lead. 🟢 Won = cliente ativo, segue para CS, não prospectar. ⚠️ Empresa em prospecção com outra pessoa da empresa = sinalizar contexto (não bloquear).</p>
+          </div>
+        </div>
+
+        <div class="finding">
+          <div class="finding-num analyst">6</div>
+          <div>
+            <h4>Memória de abordagens e cruzamento BOTH</h4>
+            <p>SDRs registram resultado em linguagem livre — Diana interpreta e salva em <code>abordagens</code> (email, sdr, relato, status, canal_sugerido). Leads com email em ambas as bases (inbound + outbound) recebem <code>source='both'</code> — prioridade máxima nas recomendações, marcados com <code>[BOTH ★]</code>.</p>
+          </div>
+        </div>
+
+        <div class="finding">
+          <div class="finding-num analyst">7</div>
+          <div>
+            <h4>Comunicação com o SDR — filtro interno silencioso</h4>
+            <p>Pipedrive é <strong>filtro interno</strong>, não fonte de leads. Diana diz <em>"Vou buscar no Inbound e Outbound..."</em> — nunca <em>"Vou checar Pipedrive em tempo real..."</em>. Status Pipedrive aparece nos cards via badges (⚪⚡🟡🟢⚠️), nunca anunciado antes das recomendações.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ARQUITETO -->
+<section id="architect">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-eyebrow">Perspectiva técnica</div>
+      <h2>Relatório do Arquiteto de Sistemas</h2>
+      <p>Engenharia, infraestrutura e decisões de design do sistema Diana.</p>
+    </div>
+
+    <div class="persona-card architect">
+      <div class="persona-header architect">
+        <div class="persona-icon">🏗️</div>
+        <div class="persona-title">
+          <h3>Arquiteto de Sistemas</h3>
+          <p>Infraestrutura, isolamento e decisões técnicas</p>
+        </div>
+      </div>
+      <div class="persona-body">
+
+        <div class="finding">
+          <div class="finding-num architect">1</div>
+          <div>
+            <h4>Arquitetura geral — isolamento por agente</h4>
+            <p>Diana roda em isolamento total do Marcel (agente comercial). Cada agente tem: Linux user próprio (<code>diana-hupdata</code>), porta de gateway exclusiva (18790), porta msteams exclusiva (3979), env file separado (<code>/opt/openclaw-diana.env</code>) e banco SQLite independente. Princípio: falha em um agente não afeta o outro.</p>
+            <div class="arch-diagram">
+<span class="green">┌─ Digital Ocean NYC3 · 134.199.224.251 ──────────────────────┐</span>
+│                                                              │
+│  <span class="blue">Caddy (reverse proxy)</span>                                        │
+│  ├── /diana/api/messages → strip_prefix → <span class="orange">:3979</span> (msteams)  │
+│  ├── /api/messages       → <span class="purple">:3978</span> (Marcel)                   │
+│  └── /huxley/*           → <span class="green">:8400</span> (Huxley)                    │
+│                                                              │
+│  <span class="orange">diana-hupdata</span> (Linux user isolado)                          │
+│  ├── openclaw gateway    → <span class="orange">:18790</span>                           │
+│  ├── msteams plugin      → <span class="orange">:3979</span>                           │
+│  ├── workspace/          → SOUL.md, fetchers, skills/        │
+│  └── memory/diana_memory.db → SQLite local                  │
+│                                                              │
+│  <span class="blue">MySQL remoto 144.22.255.182</span>                                  │
+│  ├── inbound_nutria      → user: thomas                     │
+│  ├── nutricao_outbound   → user: thomas                     │
+│  └── leads_ctrl_compliance → user: thomas                   │
+<span class="green">└──────────────────────────────────────────────────────────────┘</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="finding">
+          <div class="finding-num architect">2</div>
+          <div>
+            <h4>Stack tecnológica e modelo LLM</h4>
+            <p>Gateway: OpenClaw (Node.js) gerencia sessões Teams e injeta SOUL.md como system prompt. Modelo: <code>anthropic/claude-haiku-4-5</code> — forçado via <code>openclaw.json</code>, Opus bloqueado por custo (~15x mais caro). Comunicação Teams: Bot Framework via Azure App ID <code>a0be4e53</code>, tenant HupData. Python 3.12 com venv isolado em <code>/home/diana-hupdata/.openclaw/venv/</code>. Dependências: pymysql, cryptography.</p>
+            <div class="code-block">
+<span class="cm"># openclaw.json — modelo fixo</span>
+<span class="str">"agents"</span>: {
+  <span class="str">"defaults"</span>: {
+    <span class="str">"model"</span>: <span class="str">"minimax/MiniMax-M3"</span>,
+    <span class="str">"heartbeat"</span>: { <span class="str">"every"</span>: <span class="str">"0"</span> }  <span class="cm">// desabilitado — reduz custo</span>
+  }
+}
+<span class="cm"># dmPolicy: allowlist — só usuários autorizados</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="finding">
+          <div class="finding-num architect">3</div>
+          <div>
+            <h4>Estratégia de dados — MySQL → SQLite</h4>
+            <p>Decisão arquitetural: não consultar MySQL em tempo real a cada mensagem. O pipeline sync (17h30) materializa os dados no SQLite local — consultas da Diana são sub-milissegundo. Exceção intencional: Pipedrive é consultado em tempo real via <code>pipedrive_monitor.py</code> pois status de deal muda ao longo do dia. Cache local + real-time pontual é o padrão estabelecido.</p>
+          </div>
+        </div>
+
+        <div class="finding">
+          <div class="finding-num architect">4</div>
+          <div>
+            <h4>Gestão de custo — Haiku + SOUL.md</h4>
+            <p>Principal vetor de custo: tamanho do SOUL.md (~350 linhas) carregado em todo contexto. Roadmap: enxugar para ~60 linhas core + carregar base de conhecimento (hupdata_cases.txt, process.yaml) sob demanda. Estimativa: redução de 50-60% no custo por sessão sem perda de qualidade. Interceptação de <code>/model</code> no SOUL.md evita upgrade acidental para Opus.</p>
+          </div>
+        </div>
+
+        <div class="finding">
+          <div class="finding-num architect">5</div>
+          <div>
+            <h4>Sessões e isolamento de contexto</h4>
+            <p>Cada SDR tem sessão DM privada e independente (<code>dmScope: per-channel-peer</code>, <code>dmPolicy: allowlist</code>). Bug histórico de cross-contamination de contexto entre sessões simultâneas foi resolvido migrando de <code>dmPolicy: open</code> para <code>allowlist</code>. Limpeza automática de trajectories &gt;5MB via cron às 3h. TTL de sessão: 60 min.</p>
+          </div>
+        </div>
+
+        <div class="finding">
+          <div class="finding-num architect">6</div>
+          <div>
+            <h4>Integração Azure / Teams</h4>
+            <p>App Registration Azure (<code>a0be4e53-7cab-449b-ad80-49c0b9b6a1e6</code>), Single Tenant, secret via env file. Caddy faz strip do prefixo <code>/diana</code> antes de rotear para porta 3979 — padrão necessário pois OpenClaw msteams só aceita <code>/api/messages</code> sem prefixo. Allowlist de 8 Object IDs do Azure AD controla quem pode usar a Diana.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CAPACIDADES -->
+<section id="capacidades">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-eyebrow">O que a Diana faz</div>
+      <h2>Capacidades do agente</h2>
+    </div>
+    <div class="cap-grid">
+      <div class="cap-card">
+        <div class="cap-icon">🎯</div>
+        <h3>Prioriza leads</h3>
+        <p>Analisa 570+ inbound e 30 outbound com score detalhado. Mix 80/20: 5 inbound + 2 outbound por sessão. Modo Audit: 3 inbound + 1 outbound filtrados por cargo de auditoria/tax/compliance/controladoria/supply.</p>
+        <span class="cap-tag">AUTOMÁTICO</span>
+      </div>
+      <div class="cap-card">
+        <div class="cap-icon">📋</div>
+        <h3>Sugere abordagem</h3>
+        <p>Usa cases reais da HupData por setor. Gera WhatsApp, LinkedIn e Email sob demanda com ROI concreto.</p>
+        <span class="cap-tag">SOB DEMANDA</span>
+      </div>
+      <div class="cap-card">
+        <div class="cap-icon">🔍</div>
+        <h3>Cruza com Pipedrive</h3>
+        <p>Verifica status de deal em tempo real. Won → CS. Aberto → não interferir. Lost → pode prospectar novamente.</p>
+        <span class="cap-tag">TEMPO REAL</span>
+      </div>
+      <div class="cap-card">
+        <div class="cap-icon">🔒</div>
+        <h3>Reserva por SDR</h3>
+        <p>Lead recomendado fica reservado por 7 dias. Outros SDRs recebem aviso antes de abordar o mesmo contato.</p>
+        <span class="cap-tag">AUTOMÁTICO</span>
+      </div>
+      <div class="cap-card">
+        <div class="cap-icon">🎓</div>
+        <h3>Modo Audit</h3>
+        <p>Campanha específica para Auditoria/Tax/Compliance. Ativado por palavra-chave. 3 inbound + 1 outbound da base audit.</p>
+        <span class="cap-tag">CAMPANHA</span>
+      </div>
+      <div class="cap-card">
+        <div class="cap-icon">💬</div>
+        <h3>Responde objeções</h3>
+        <p>Argumentos validados em campo para as objeções mais comuns. Scripts prontos baseados em cases reais.</p>
+        <span class="cap-tag">SOB DEMANDA</span>
+      </div>
+      <div class="cap-card">
+        <div class="cap-icon">🧠</div>
+        <h3>Memória de abordagens</h3>
+        <p>SDR registra resultado em linguagem livre. Diana interpreta, salva status e ajusta prioridade nas próximas recomendações.</p>
+        <span class="cap-tag">APRENDIZADO</span>
+      </div>
+      <div class="cap-card">
+        <div class="cap-icon">⭐</div>
+        <h3>Leads BOTH</h3>
+        <p>Leads presentes em inbound E outbound recebem prioridade máxima — aparecem primeiro com marcação especial.</p>
+        <span class="cap-tag">AUTOMÁTICO</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PERGUNTAS -->
+<section>
+  <div class="container">
+    <div class="section-header">
+      <div class="section-eyebrow">Como usar</div>
+      <h2>Perguntas sugeridas no Teams</h2>
+      <p>Digite diretamente no chat com a Diana. Ela responde com leads, cases e ângulos de abordagem.</p>
+    </div>
+    <div class="q-grid">
+      <div class="q-item">
+        <span class="q-badge badge-prosp">Prospecção</span>
+        <p>"Quem devo abordar hoje?"</p>
+      </div>
+      <div class="q-item">
+        <span class="q-badge badge-prosp">Prospecção</span>
+        <p>"Me dá os melhores leads da semana"</p>
+      </div>
+      <div class="q-item">
+        <span class="q-badge badge-intel">Inteligência</span>
+        <p>"Tem leads do setor de saúde?"</p>
+      </div>
+      <div class="q-item">
+        <span class="q-badge badge-pipe">Pipedrive</span>
+        <p>"A empresa X já está no Pipedrive?"</p>
+      </div>
+      <div class="q-item">
+        <span class="q-badge badge-abord">Abordagem</span>
+        <p>"Monta abordagem para [Nome] da [Empresa]"</p>
+      </div>
+      <div class="q-item">
+        <span class="q-badge badge-abord">Objeção</span>
+        <p>"O cliente disse que já tem data science. O que respondo?"</p>
+      </div>
+      <div class="q-item">
+        <span class="q-badge badge-audit">Audit</span>
+        <p>"Diana, leads audit" ou "leads para campanha de auditoria"</p>
+      </div>
+      <div class="q-item">
+        <span class="q-badge badge-intel">Feedback</span>
+        <p>"Falei com [email] hoje, não atendeu" — Diana registra e ajusta prioridade</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MÉTRICAS -->
+<section>
+  <div class="container">
+    <div class="section-header">
+      <div class="section-eyebrow">Resultados esperados</div>
+      <h2>Impacto no processo comercial</h2>
+    </div>
+    <div class="metrics-row">
+      <div class="metric-card">
+        <div class="metric-val">-70%</div>
+        <div class="metric-label">Tempo de seleção de leads por sessão</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-val">100%</div>
+        <div class="metric-label">Leads verificados no Pipedrive antes do contato</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-val">+fit</div>
+        <div class="metric-label">Abordagem com case do setor certo sempre</div>
+      </div>
+    </div>
+    <div style="background:white;border:1px solid var(--gray-100);border-radius:10px;padding:24px;">
+      <h3 style="font-size:15px;font-weight:600;color:var(--dark);margin-bottom:16px;">Dicas de uso</h3>
+      <div style="display:flex;flex-direction:column;gap:12px;">
+        <div style="display:flex;gap:10px;align-items:flex-start;">
+          <div style="width:6px;height:6px;border-radius:50%;background:var(--mint);flex-shrink:0;margin-top:7px;"></div>
+          <p style="font-size:13px;color:var(--gray-500);">Seja específico: <em>"leads do setor financeiro com cargo de diretor"</em> dá resultado melhor que só <em>"me dá leads"</em></p>
+        </div>
+        <div style="display:flex;gap:10px;align-items:flex-start;">
+          <div style="width:6px;height:6px;border-radius:50%;background:var(--mint);flex-shrink:0;margin-top:7px;"></div>
+          <p style="font-size:13px;color:var(--gray-500);">Feche o loop: se abordou um lead e teve resposta, conta pra Diana — ela aprende e melhora as próximas recomendações</p>
+        </div>
+        <div style="display:flex;gap:10px;align-items:flex-start;">
+          <div style="width:6px;height:6px;border-radius:50%;background:var(--mint);flex-shrink:0;margin-top:7px;"></div>
+          <p style="font-size:13px;color:var(--gray-500);">Peça o script: <em>"como abro a conversa com X?"</em> e ela gera WhatsApp, LinkedIn e Email prontos com case do setor</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ACESSO -->
+<section id="acesso">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-eyebrow">Time comercial</div>
+      <h2>Quem tem acesso</h2>
+    </div>
+    <div class="users-grid">
+      <div class="user-chip"><div class="user-av">Ma</div><span class="user-name">Marcus</span></div>
+      <div class="user-chip"><div class="user-av">Jo</div><span class="user-name">Josiane</span></div>
+      <div class="user-chip"><div class="user-av">An</div><span class="user-name">Ana Carolina da Silva</span></div>
+      <div class="user-chip"><div class="user-av">Se</div><span class="user-name">Sergio</span></div>
+      <div class="user-chip"><div class="user-av">Ar</div><span class="user-name">Aretha</span></div>
+      <div class="user-chip"><div class="user-av">Si</div><span class="user-name">Silene</span></div>
+    </div>
+    <div class="cta-box">
+      <div>
+        <h3>Como começar agora</h3>
+        <p>Sugestão para a primeira conversa: <em>"Quem é você?"</em> e depois <em>"Diana, quem devo abordar hoje?"</em></p>
+      </div>
+      <div class="cta-steps">
+        <span class="cta-step">Abra o Teams</span>
+        <span class="cta-arrow">→</span>
+        <span class="cta-step">Chat</span>
+        <span class="cta-arrow">→</span>
+        <span class="cta-step">Busque Diana</span>
+        <span class="cta-arrow">→</span>
+        <span class="cta-step">Mande uma mensagem</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-brand">
+    <div class="nav-avatar">Di</div>
+    <span>Diana · HupData Data & AI Solutions</span>
+  </div>
+  <p>Modelo: minimax/MiniMax-M3 · Gateway: OpenClaw · Servidor: Digital Ocean NYC3 · Sync: 17h30 seg–sex</p>
+</footer>
+
+<script>
+// Tab switching (analyst/architect)
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const target = btn.dataset.tab;
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.persona-panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById(target).classList.add('active');
+  });
+});
+
+// Smooth scroll
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    e.preventDefault();
+    document.querySelector(a.getAttribute('href'))?.scrollIntoView({ behavior: 'smooth' });
+  });
+});
+</script>
+
+</body>
+</html>
